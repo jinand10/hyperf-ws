@@ -29,7 +29,7 @@ class WsSubProcess extends AbstractProcess
         $redis = $this->container
             ->get(RedisFactory::class)
             ->get(WebSocket::WEBSOCKET_CONNECTION_DATA_DRIVER_POOL);
-        $channel = $this->mainService->getPushChannelByIp($this->mainService->getLocalIp());
+        $channel = $this->mainService->getPushChannelByUri($this->mainService->getLocalUri());
         var_dump(sprintf("开始订阅 channel: %s", $channel));
         $redis->subscribe([$channel], [$this, 'push']);
     }

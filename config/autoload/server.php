@@ -19,8 +19,8 @@ return [
         [
             'name' => 'ws',
             'type' => Server::SERVER_WEBSOCKET,
-            'host' => '0.0.0.0',
-            'port' => 9601,
+            'host' => env('WS_SERVER_HOST', '0.0.0.0'),
+            'port' => (int)(env('WS_SERVER_PORT', 9501)),
             'sock_type' => SWOOLE_SOCK_TCP,
             'callbacks' => [
                 SwooleEvent::ON_HAND_SHAKE => [Hyperf\WebSocketServer\Server::class, 'onHandShake'],
@@ -40,7 +40,7 @@ return [
         'socket_buffer_size' => 2 * 1024 * 1024,
     ],
     'callbacks' => [
-        SwooleEvent::ON_BEFORE_START => [App\Server\ServerStartCallback::class, 'beforeStart'],
+        SwooleEvent::ON_BEFORE_START => [Hyperf\Framework\Bootstrap\ServerStartCallback::class, 'beforeStart'],
         SwooleEvent::ON_WORKER_START => [Hyperf\Framework\Bootstrap\WorkerStartCallback::class, 'onWorkerStart'],
         SwooleEvent::ON_PIPE_MESSAGE => [Hyperf\Framework\Bootstrap\PipeMessageCallback::class, 'onPipeMessage'],
     ],

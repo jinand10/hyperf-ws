@@ -10,13 +10,13 @@ use Hyperf\Utils\ApplicationContext;
 class MainService
 {
     /**
-     * 根据IP获取推送订阅者
-     * @param string $ip
+     * 根据host:port获取推送订阅者
+     * @param string $uri
      * @return string
      */
-    public function getPushChannelByIp(string $ip): string
+    public function getPushChannelByUri(string $uri): string
     {
-        return WebSocket::WEBSOCKET_PUSH_CHANNEL_PREFIX.$ip;
+        return WebSocket::WEBSOCKET_PUSH_CHANNEL_PREFIX.$uri;
     }
 
     /**
@@ -31,12 +31,12 @@ class MainService
     }
 
     /**
-     * 获取网卡IP
+     * 获取uri
      * @return string
      */
-    public function getLocalIp(): string
+    public function getLocalUri(): string
     {
-        return (string)(swoole_get_local_ip()['eth0'] ?? '');
+        return (string)(swoole_get_local_ip()['eth0'] ?? '').':'.env('WS_SERVER_PORT', '9501');
     }
 
     /**
@@ -46,7 +46,7 @@ class MainService
      */
     public function getFdHashField(int $fd): string
     {
-        return (string)($this->getLocalIp().'-'.$fd);
+        return (string)($this->getLocalUri().'-'.$fd);
     }
 
     /**
@@ -65,7 +65,7 @@ class MainService
                 $ret = $redis
                     ->multi()
                     ->hSet(WebSocket::WEBSOCKET_CONNECTION_UID_HASH, $uid, json_encode([
-                        'ip'            => $this->getLocalIp(),
+                        'uri'           => $this->getLocalUri(),
                         'fd'            => $fd,
                         'connectionTs'  => time(),
                     ]))
@@ -111,11 +111,11 @@ class MainService
         $connectList = $redis->hKeys(WebSocket::WEBSOCKET_CONNECTION_FD_HASH);
         foreach ($connectList as $item) {
             $connect = explode('-', $item);
-            $ip = $connect[0] ?? '';
+            $uri = $connect[0] ?? '';
             $fd = $connect[1] ?? 0;
-            $channel = $this->getPushChannelByIp($ip);
+            $channel = $this->getPushChannelByUri($uri);
             $redis->publish($channel, json_encode([
-                'ip'    => $ip,
+                'uri'   => $uri,
                 'fd'    => $fd,
                 'uid'   => $uid,
                 'msg'   => $msg,
