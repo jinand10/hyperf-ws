@@ -20,6 +20,22 @@ use Hyperf\Constants\Annotation\Constants;
  */
 class WebSocket extends AbstractConstants
 {
+    /**
+     * {get} /get/user 获取用户信息
+     * apiheader uid string 用户ID
+     * apiparams data.userList.uid string 用户ID
+     * apiparams data.userList.uid string 用户ID
+     * apiparams data.userList.uid string 用户ID
+     * apiparams data.userList.uid string 用户ID
+     * apiparams data.userList.uid string 用户ID
+     * apiparams data.userList.uid string 用户ID
+     * apiresponse
+     *  {
+            "code": "1",
+     *      "msg": "错误信息"
+     *      "data": {}
+     *  }
+     */
     const WEBSOCKET_CONNECTION_DATA_DRIVER = 'redis';
 
     const WEBSOCKET_CONNECTION_DATA_DRIVER_POOL = 'default';
